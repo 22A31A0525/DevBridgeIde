@@ -13,7 +13,6 @@ const EditorHeader = ({
     connectionStatus,
     isCopied,
     activeUsers,
-    allUserPriorities, // Prop is received but not used in this component's render as per previous logic
     selectedLanguage,
     selectedTheme,
     availableLanguages,
@@ -105,7 +104,7 @@ const EditorHeader = ({
                     <span
                         className="text-sm bg-gray-800 px-3 py-1 rounded-full border border-gray-700"
                         title={
-                            `Active: ${activeUsers.map(u => `${u}`).join(', ')}` // Removed priority from title as it's not a direct prop for this display
+                            `Active: ${activeUsers.map(u => `${u}`).join(', ')}` 
                         }
                     >
                         <FontAwesomeIcon icon={faUsers} className="mr-2 text-blue-400" />

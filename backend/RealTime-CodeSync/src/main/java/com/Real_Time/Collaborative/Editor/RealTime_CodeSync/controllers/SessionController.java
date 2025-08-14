@@ -43,8 +43,6 @@ public class SessionController {
 
     @GetMapping
     public ResponseEntity<?> getUserSessions() {
-        // The service method already returns ResponseEntity, so directly return it.
-        // It handles authentication, not found, and internal server errors.
         return sessionManger.getUserSessions();
     }
 
@@ -55,7 +53,7 @@ public class SessionController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Session ID path variable cannot be empty.");
         }
 
-        // Use the new method name from SessionManagment
+        // Use the new method name from SessionManagement
         return sessionManger.getSessionById(id);
     }
 
