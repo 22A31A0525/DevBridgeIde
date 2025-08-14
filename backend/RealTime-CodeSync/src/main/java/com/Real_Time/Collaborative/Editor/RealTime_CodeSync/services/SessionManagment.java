@@ -29,10 +29,7 @@ public class SessionManagment {
      * @return The created CodeSession or null if creation failed due to invalid input/authentication.
      */
     public CodeSession sessionCreate(String sessionName) {
-        if (!StringUtils.hasText(sessionName)) {
-            System.err.println("Session creation failed: Session name cannot be empty or null.");
-            return null;
-        }
+
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getPrincipal())) {
@@ -80,7 +77,6 @@ public class SessionManagment {
             return ResponseEntity.ok(sessions);
         } catch (Exception e) {
             System.err.println("Error retrieving sessions for user " + username + ": " + e.getMessage());
-            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to retrieve sessions.");
         }
     }

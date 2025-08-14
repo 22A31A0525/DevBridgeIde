@@ -1,6 +1,8 @@
 package com.Real_Time.Collaborative.Editor.RealTime_CodeSync.services;
 
 import com.Real_Time.Collaborative.Editor.RealTime_CodeSync.models.CodeSession;
+import com.Real_Time.Collaborative.Editor.RealTime_CodeSync.models.EditPayload;
+import com.Real_Time.Collaborative.Editor.RealTime_CodeSync.models.MonacoRange;
 import com.Real_Time.Collaborative.Editor.RealTime_CodeSync.repository.CodeSessionRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,23 +17,71 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 
+
+//TextWebSocketHandler is a specialized "blueprint" class provided by the Spring Framework.
+//Think of it as a pre-built toolkit specifically for handling text-based
+//WebSocket messages (like the code changes and cursor positions in your editor).
+
+
 @Service
 public class CodeEditorWebSocketHandler extends TextWebSocketHandler {
 
     private final Map<String, CopyOnWriteArraySet<WebSocketSession>> sessionMap = new ConcurrentHashMap<>();
     private final Map<String, Set<String>> usersInSession = new ConcurrentHashMap<>();
-    // Store the current code AND language for each session in memory (cache)
-    // We'll store it as a CodeSession object for consistency
     private final Map<String, CodeSession> currentSessionStateInMemory = new ConcurrentHashMap<>();
 
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private final CodeSessionRepository codeSessionRepository; // Reintroduced
+    private final CodeSessionRepository codeSessionRepository;
 
-    // Constructor - now requires CodeSessionRepository
+
     public CodeEditorWebSocketHandler(CodeSessionRepository codeSessionRepository) {
         this.codeSessionRepository = codeSessionRepository;
     }
 
+    private String applyEditToString(String originalCode, EditPayload edit) {
+
+        try {
+            MonacoRange range = edit.getRange();
+            int startLine = range.getStartLineNumber() - 1;
+            int startCol = range.getStartColumn() - 1;
+            int endLine = range.getEndLineNumber() - 1;
+            int endCol = range.getEndColumn() - 1;
+
+            String newText = edit.getText();
+            // 2. Split the original code into an array of lines.
+            String[] lines = originalCode.split("\n", -1);
+
+
+            String firstLinePart = lines[startLine].substring(0, startCol);
+            String lastLinePart = lines[endLine].substring(endCol);
+
+
+            String combinedLine = firstLinePart + newText + lastLinePart;
+
+            // 6. Reconstruct the entire code.
+            List<String> newLines = new ArrayList<>();
+
+            // Add all the lines from the original code that came BEFORE the edit.
+            for (int i = 0; i < startLine; i++) {
+                newLines.add(lines[i]);
+            }
+
+            // Add our newly constructed line that contains the change.
+            newLines.add(combinedLine);
+
+            // Add all the lines from the original code that came AFTER the edit.
+            for (int i = endLine + 1; i < lines.length; i++) {
+                newLines.add(lines[i]);
+            }
+
+            // 7. Join the list of lines back into a single string with newline characters.
+            return String.join("\n", newLines);
+        }
+        catch (ArrayIndexOutOfBoundsException e){
+            System.out.println("IndexBound Exception raised returning empty string");
+            return "";
+        }
+    }
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         String sessionId = (String) session.getAttributes().get("sessionId");
@@ -43,7 +93,7 @@ public class CodeEditorWebSocketHandler extends TextWebSocketHandler {
             return;
         }
 
-        // --- Determine if this is the first active connection for this session to THIS SERVER INSTANCE ---
+
         // This checks if the session is currently active in memory *on this specific server instance*.
         boolean isFirstConnectionToThisInstance = (!sessionMap.containsKey(sessionId) || sessionMap.get(sessionId).isEmpty());
 
@@ -109,9 +159,9 @@ public class CodeEditorWebSocketHandler extends TextWebSocketHandler {
             TextMessage textMessage = new TextMessage(jsonMessage);
 
             try {
-                session.sendMessage(textMessage);
+            session.sendMessage(textMessage);
                 System.out.println("Sent initial code state to user: " + username + " in session " + sessionId);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 System.err.println("Error sending initial code state to " + username + ": " + e.getMessage());
             }
         }
@@ -146,17 +196,21 @@ public class CodeEditorWebSocketHandler extends TextWebSocketHandler {
 
         boolean stateChanged = false;
 
+
         // If it's a CODE_CHANGE message, update in-memory code
-        if ("CODE_CHANGE".equals(messageType) && codeContent != null) {
-            if (!currentSessionState.getCode().equals(codeContent)) { // Only update if content actually changed
-                currentSessionState.setCode(codeContent);
+        if ("CODE_CHANGE_UPDATE".equals(messageType) && codeContent != null) {
+            if (!currentSessionState.getCode().equals(codeContent)) {
+                ObjectMapper mapper = new ObjectMapper();
+                EditPayload edit = mapper.readValue(codeContent, EditPayload.class);
+                String newFullCode = applyEditToString(currentSessionState.getCode(), edit);
+                currentSessionState.setCode(newFullCode);
                 stateChanged = true;
                 System.out.println("Code for session " + sessionId + " updated in in-memory cache.");
             }
         }
 
         // If it's a LANGUAGE_CHANGE message, or if a CODE_CHANGE also includes language, update in-memory language
-        if (("CODE_CHANGE".equals(messageType) || "LANGUAGE_CHANGE".equals(messageType)) && selectedLanguage != null) {
+        if ( "LANGUAGE_CHANGE".equals(messageType) && selectedLanguage != null) {
             if (!currentSessionState.getLanguage().equals(selectedLanguage)) { // Only update if language actually changed
                 currentSessionState.setLanguage(selectedLanguage);
                 stateChanged = true;
@@ -174,7 +228,7 @@ public class CodeEditorWebSocketHandler extends TextWebSocketHandler {
         // This ensures the content and language changes are propagated
         if (sessionId != null && sessionMap.containsKey(sessionId)) {
             for (WebSocketSession session : sessionMap.get(sessionId)) {
-                if (session.isOpen()) {
+                if (session.isOpen() && session!=senderSession) {
                     try {
                         session.sendMessage(message);
                         System.out.println("Broadcasting message from " + username + " to Session ID: " + session.getId());
@@ -294,7 +348,6 @@ public class CodeEditorWebSocketHandler extends TextWebSocketHandler {
             }
         } catch (IOException e) {
             System.err.println("Error broadcasting user list for session " + sessionId + ": " + e.getMessage());
-            e.printStackTrace();
         }
     }
 }
