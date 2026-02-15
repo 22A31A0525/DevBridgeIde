@@ -24,7 +24,7 @@ api.interceptors.request.use(
             "The backend is waking up from its free-tier slumber. This may take up to a minute. Please wait...",
             { id: 'cold-start-toast', duration: 10000 }
         );
-    }, 5000); // Trigger after 3 seconds
+    }, 5000); // Trigger after 5 seconds
 
     return config;
   },
