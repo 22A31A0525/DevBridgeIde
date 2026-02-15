@@ -28,6 +28,9 @@ public class SecurityConfig {
     @Autowired
     private JwtFilter jwtFilter;
 
+    @org.springframework.beans.factory.annotation.Value("${application.cors.allowed-origins}")
+    private java.util.List<String> allowedOrigins;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -71,10 +74,11 @@ public class SecurityConfig {
         config.setAllowCredentials(true);
 
         // List all origins your frontend will be served from.
-        // IMPORTANT: For production, replace localhost with your actual frontend domain(s).
-        config.addAllowedOrigin("http://localhost:5173"); // Your Vite development server
-        config.addAllowedOrigin("http://127.0.0.1:5173");
-        config.addAllowedOrigin("http://192.168.29.179:5173/");// Another common localhost variant
+        if (allowedOrigins != null) {
+            for (String origin : allowedOrigins) {
+                config.addAllowedOrigin(origin.trim());
+            }
+        }
 
         // Allow all common HTTP methods
         config.addAllowedMethod("GET");
@@ -94,3 +98,5 @@ public class SecurityConfig {
         return source;
     }
 }
+
+//}
