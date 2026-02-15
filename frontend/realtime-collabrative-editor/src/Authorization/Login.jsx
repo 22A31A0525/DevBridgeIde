@@ -1,5 +1,5 @@
 import { useState, useEffect }from "react";
-import axios from "axios";
+import api from "../services/axios";
 import toast, { Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
@@ -78,10 +78,8 @@ const Login = () => {
     if (!validateFields()) return;
 
     setLoading(true);
-    const url =
-      mode === "login"
-        ? `http://${backendHost}:${backendPort}/auth/login`
-        : `http://${backendHost}:${backendPort}/auth/register`;
+    setLoading(true);
+    const url = mode === "login" ? "/auth/login" : "/auth/register";
 
     let payload;
     if (mode === "login") {
@@ -91,7 +89,7 @@ const Login = () => {
     }
 
     try {
-      const res = await axios.post(url, payload);
+      const res = await api.post(url, payload);
       if (mode === "login" && res.data) {
         localStorage.setItem("token", res.data);
         toast.success("Logged in successfully!");

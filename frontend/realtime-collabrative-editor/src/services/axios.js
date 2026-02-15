@@ -2,10 +2,9 @@
 import axios from "axios";
 
   const backend_url = import.meta.env.VITE_APP_BACKEND_URL;
-const backend_port = import.meta.env.VITE_APP_BACKEND_PORT;
 // Create an axios instance
 const api = axios.create({
-  baseURL: `${backend_url}:${backend_port}`, // Adjust to your backend URL
+  baseURL: backend_url, 
 });
 
 // Add a request interceptor

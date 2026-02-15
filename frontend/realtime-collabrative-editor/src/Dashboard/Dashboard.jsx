@@ -71,7 +71,7 @@ function Dashboard() {
 
 const handleDeleteSession=useCallback(async (sessionId)=>{
   try{
-   const res=await api.delete(`api/sessions/${sessionId}`)
+   const res=await api.delete(`/api/sessions/${sessionId}`)
  window.location.reload();
   }
   catch{

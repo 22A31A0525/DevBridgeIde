@@ -59,9 +59,9 @@ const CodeEditor = ({ sessionId, username, initialLanguage = "javascript", initi
             return;
         }
 
-        const backendHost = window.location.hostname;
-        const backendPort = import.meta.env.VITE_APP_BACKEND_PORT || 8080;
-        const rawSocketUrl = `ws://${backendHost}:${backendPort}/ws/editor?token=${token}&sessionId=${sessionId}&username=${username}`;
+        const backendWsUrl = import.meta.env.VITE_APP_BACKEND_WEBSOCKET_URL;
+        const protocol = window.location.protocol === 'https:' ? 'wss' : 'wss'; // Default to wss for cloud
+        const rawSocketUrl = `${protocol}://${backendWsUrl}/ws/editor?token=${token}&sessionId=${sessionId}&username=${username}`;
 
         // Initialize WebSocket connection
         socketRef.current = new WebSocket(rawSocketUrl);
@@ -298,12 +298,8 @@ const CodeEditor = ({ sessionId, username, initialLanguage = "javascript", initi
         }
 
         try {
-            const token = localStorage.getItem('token');
-            const backendHost = window.location.hostname;
-            const backendPort = 8080; // Assuming default backend port
-
             const response = await api.post(
-                `http://${backendHost}:${backendPort}/api/code/execute`,
+                '/api/code/execute',
                 {
                     language: currentLangConfig.value,
                     version: currentLangConfig.version,
