@@ -22,7 +22,7 @@ services:
       context: ./frontend/realtime-collabrative-editor
       dockerfile: Dockerfile
       args:
-        - VITE_APP_BACKEND_URL=${VITE_APP_BACKEND_URL:-http://localhost:8080}
+        - VITE_APP_BACKEND_URL=${VITE_APP_BACKEND_URL:-https://devbridgeide.onrender.com}
     ports:
       - "80:80"
     networks:
