@@ -32,7 +32,7 @@ function Dashboard() {
     localStorage.removeItem('token');
     setToken(null);
     setUser(null);
-    navigate('/auth'); // Ensure this matches your login route
+    navigate('/authenicate'); // Ensure this matches your login route
   }, [navigate]);
 
   useEffect(() => {
@@ -46,7 +46,7 @@ function Dashboard() {
       }
     } else {
       setUser(null);
-      navigate('/auth');
+      navigate('/authenicate');
     }
   }, [token, logout, navigate]);
 

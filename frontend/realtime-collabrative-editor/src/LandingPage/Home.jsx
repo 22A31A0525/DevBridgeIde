@@ -87,7 +87,7 @@ const Home = () => {
           <div className="hidden md:flex space-x-6 text-lg">
             <a href="#features" className="text-gray-300 hover:text-blue-400 transition duration-300 ease-in-out">Features</a>
             <a href="#demo" className="text-gray-300 hover:text-blue-400 transition duration-300 ease-in-out">Demo</a>
-            <a href="/auth"  target='_blank' className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 font-thin hover:to-purple-700 text-white py-1 px-4 rounded-full transition duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+            <a href="/authenicate"  target='_blank' className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 font-thin hover:to-purple-700 text-white py-1 px-4 rounded-full transition duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
                Register/Login
             </a>
           </div>
@@ -139,7 +139,7 @@ const Home = () => {
               <nav className="flex flex-col gap-6 text-xl">
                 <a href="#features" onClick={closeMobileMenu} className="text-gray-300 hover:text-blue-400 transition duration-300 ease-in-out">Features</a>
                 <a href="#demo" onClick={closeMobileMenu} className="text-gray-300 hover:text-blue-400 transition duration-300 ease-in-out">Demo</a>
-                <a href="/auth" onClick={closeMobileMenu} className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-3 px-6 rounded-full transition duration-300 ease-in-out shadow-md hover:shadow-lg text-center">
+                <a href="/authenicate" onClick={closeMobileMenu} className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-3 px-6 rounded-full transition duration-300 ease-in-out shadow-md hover:shadow-lg text-center">
                  Register/Login
                 </a>
               </nav>
@@ -159,7 +159,7 @@ const Home = () => {
             Real-time collaborative code editor for seamless pair programming, online tutoring, and team development.
           </p>
           <div className={`${heroInView ? 'animate-scale-in-hero delay-600' : 'opacity-0'}`}>
-            <a href="/auth" target='_blank' className="inline-block bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-bold py-4 px-10 rounded-full shadow-lg transform hover:scale-105 transition duration-300 ease-in-out text-lg pulsate-once">
+            <a href="/authenicate" target='_blank' className="inline-block bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-bold py-4 px-10 rounded-full shadow-lg transform hover:scale-105 transition duration-300 ease-in-out text-lg pulsate-once">
             Get Started
             </a>
           </div>
@@ -279,7 +279,7 @@ const Home = () => {
           <p className={`text-xl text-gray-300 max-w-2xl mx-auto mb-8 ${demoInView ? 'animate-fade-in-section delay-800' : 'opacity-0'}`}>
             Ready to experience frictionless collaborative coding?
           </p>
-          <a href="/auth" target='_blank' className={`inline-block bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-4 px-10 rounded-full shadow-lg transform hover:scale-105 transition duration-300 ease-in-out text-lg ${demoInView ? 'pulsate-once delay-900' : 'opacity-0'}`}>
+          <a href="/authenicate" target='_blank' className={`inline-block bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-4 px-10 rounded-full shadow-lg transform hover:scale-105 transition duration-300 ease-in-out text-lg ${demoInView ? 'pulsate-once delay-900' : 'opacity-0'}`}>
             Get Started Now
           </a>
         </div>

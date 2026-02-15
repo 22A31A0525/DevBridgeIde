@@ -29,8 +29,11 @@
 	<properties>
 		<java.version>24</java.version>
 		<spring-ai.version>1.0.0</spring-ai.version>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
 	</properties>
-	<dependencies>
+
+    <dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>

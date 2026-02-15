@@ -17,7 +17,7 @@ function App() {
     <BrowserRouter>
     <Routes>
       <Route path='/' element={<Home/>}></Route>
-      <Route path='/auth' element={<Login />}></Route>
+      <Route path='/authenicate' element={<Login />}></Route>
      
       <Route path='/dashboard' element={<Dashboard/>}></Route>
       <Route path='/w' element={<WebSocketEditor/>}></Route>
