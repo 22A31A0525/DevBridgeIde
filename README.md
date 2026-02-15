@@ -3,10 +3,10 @@
 ![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white)
 ![Spring](https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white)
 ![React](https://img.shields.io/badge/react-%2320232A.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
-![Nginx](https://img.shields.io/badge/nginx-%23009639.svg?style=for-the-badge&logo=nginx&logoColor=white)
-![GCP](https://img.shields.io/badge/Google_Cloud-4285F4?style=for-the-badge&logo=google-cloud&logoColor=white)
+![Render](https://img.shields.io/badge/Render-%2346E3B7.svg?style=for-the-badge&logo=render&logoColor=white)
+![Vercel](https://img.shields.io/badge/vercel-%23000000.svg?style=for-the-badge&logo=vercel&logoColor=white)
 
-CodeSync is a web-based, real-time collaborative code editor that allows multiple developers to join a session and write, edit, and review code together simultaneously. This full-stack application is built with a robust Java Spring Boot backend and a dynamic React frontend, fully deployed on Google Cloud Platform.
+CodeSync is a web-based, real-time collaborative code editor that allows multiple developers to join a session and write, edit, and review code together simultaneously. This full-stack application is built with a robust Java Spring Boot backend and a dynamic React frontend.
 
 ## Features
 
@@ -25,41 +25,41 @@ CodeSync is a web-based, real-time collaborative code editor that allows multipl
 -   **Monaco Editor:** The editor engine that powers VS Code for a rich editing experience.
 -   **StompJS & SockJS:** For WebSocket communication.
 -   **Tailwind CSS:** For styling the user interface.
+-   **Vite:** Fast build tool and development server.
 
 ### Backend
 -   **Java 17 & Spring Boot:** For the core application and REST APIs.
 -   **Spring Security & JWT:** For securing the application and handling authentication.
 -   **Spring WebSocket:** For handling real-time, bi-directional communication.
 -   **PostgreSQL:** As the primary database for user and session data.
--   **In-Memory State:** `ConcurrentHashMap` for managing active users and sessions.
 
 ### Deployment
--   **Google Cloud Platform (GCP)**
--   **Google Compute Engine (GCE):** For hosting the application on a Linux VM.
--   **Nginx:** As a reverse proxy and for serving the static frontend files.
+-   **Backend:** Deployed on **Render** (Cloud Application Hosting).
+-   **Frontend:** Deployed on **Vercel** (Frontend Cloud Platform).
 
-## Deployment Guide (GCP)
+## Deployment Guide
 
-This application is deployed on a Google Compute Engine VM. Here is a summary of the process:
+This application follows a modern multi-cloud deployment strategy.
 
-### 1. Backend Deployment
-1.  **Package the Application:** The Java Spring Boot application is packaged into an executable `.jar` file using `mvn clean package`.
-2.  **Copy to Server:** The `.jar` file is copied to the GCE VM using `gcloud compute scp`.
-3.  **Run the Service:** The application is started on the VM as a background process using `nohup java -jar your-app.jar &`. It connects to the locally installed PostgreSQL database and listens on port `8080`.
+### 1. Backend Deployment (Render)
+The backend is a Dockerized Spring Boot application.
+1.  **Platform:** Create a new "Web Service" on [Render](https://render.com).
+2.  **Environment Variables:**
+    -   `DB_URL`: JDBC URL for your PostgreSQL database (e.g., from Neon or Render PostgreSQL).
+    -   `DB_USERNAME` & `DB_PASSWORD`: Database credentials.
+    -   `JWT_SECRET_KEY`: Secure random string for token signing.
+    -   `JWT_EXPIRATION`: Token validity duration in milliseconds.
+    -   `CORS_ALLOWED_ORIGINS`: Comma-separated list of allowed frontend origins (e.g., `https://your-app.vercel.app`).
+3.  **Docker:** Render automatically builds the application using the `Dockerfile` located in `backend/RealTime-CodeSync`.
 
-### 2. Frontend Deployment
-1.  **Build the Application:** The React application is built for production using `npm run build`, creating an optimized `build` folder.
-2.  **Copy to Server:** The `build` folder is recursively copied to the GCE VM using `gcloud compute scp --recurse`.
-
-### 3. Nginx Configuration
-Nginx is installed on the VM and configured as a reverse proxy.
--   It listens on the public port `80`.
--   It serves the static files from the React `build` folder for any page requests (e.g., `/`, `/auth/login`).
--   It forwards all API requests starting with `/api/` or `/auth/` to the backend running on `http://localhost:8080`.
--   It upgrades and forwards all WebSocket connections starting with `/ws/` to the backend.
-
-### 4. Firewall Configuration
-A firewall rule is created in Google Cloud to allow public internet traffic (`0.0.0.0/0`) on `TCP:80`, applied to the VM using a network tag.
+### 2. Frontend Deployment (Vercel)
+The frontend is a Vite + React application optimized for Vercel.
+1.  **Platform:** Import the repository into [Vercel](https://vercel.com).
+2.  **Root Directory:** Set the root directory to `frontend/realtime-collabrative-editor`.
+3.  **Environment Variables:**
+    -   `VITE_APP_BACKEND_URL`: The URL of your deployed backend (e.g., `https://api.render.com`).
+    -   `VITE_APP_BACKEND_WEBSOCKET_URL`: The domain of your backend (e.g., `api.render.com`) for WebSocket connections.
+4.  **Routing:** A `vercel.json` file is included to handle Single Page Application (SPA) routing, ensuring pages like `/login` work correctly on refresh.
 
 ## Future Improvements
 -   **Persistence with Redis:** Move the in-memory session storage to Redis to ensure session data persists across server restarts and to enable scaling.
